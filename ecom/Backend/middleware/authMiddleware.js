@@ -5,7 +5,7 @@ const authMiddleware = (req, res, next) => {
 		return res.status(401).json({ message: "No Token provided" });
 	}
 	const token = authHeader;
-	//console.log("tokennnn", authHeader);
+	console.log("tokennnn", authHeader);
 	try {
 		const decoded = jwt.verify(token, process.env.JWT_SECRET);
 		console.log("decode", decoded);

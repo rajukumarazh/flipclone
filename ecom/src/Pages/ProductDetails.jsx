@@ -4,20 +4,25 @@ import { useParams } from "react-router-dom";
 import { addToCart } from "../features/products/productSlice";
 import CartToast from "../components/CartToast";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 const ProductDetails = () => {
 	const { id } = useParams();
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const [showToast, setShowToast] = useState(false);
 	const products = useSelector((state) => state.products.allProducts);
 	const cart = useSelector((state) => state.products.cart);
-	//const allproduct = useSelector((state) => state.products);
+
 	const product = products?.find((item) => item.id === Number(id));
 	let currentCartProduct = cart?.find((item) => item.id == Number(id));
-	// console.log("currerent", currentCartProduct);
-	// console.log("ccc", products);
+
 	const handleCartItem = () => {
 		dispatch(addToCart(product));
 		setShowToast(true);
+	};
+	const handleBuyNow = () => {
+		dispatch(addToCart(product));
+		navigate("/cart");
 	};
 	return (
 		<div className="max-w-7xl mx-auto px-4 py-8 bg-white">
@@ -58,11 +63,12 @@ const ProductDetails = () => {
 							</Link>
 						)}
 
-						<Link
-							to={"/checkout"}
+						<button
+							onClick={() => handleBuyNow()}
+							// to={"/payment"}
 							className="bg-orange-500 text-white px-6 py-3 rounded font-medium">
 							Buy Now
-						</Link>
+						</button>
 					</div>
 
 					<p className="mt-6 text-gray-600">

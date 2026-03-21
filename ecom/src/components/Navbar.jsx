@@ -10,7 +10,7 @@ const Navbar = () => {
 	const userToken = localStorage.getItem("tkn");
 	const navigate = useNavigate();
 	const [open, setOpen] = useState(false);
-	console.log("openstatus", open);
+	//console.log("openstatus", open);
 	// useEffect(() => {
 	// 	const handleClickOutside = (e) => {
 	// 		if (!e.target.closest(".profile-dropdown")) {

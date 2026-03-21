@@ -1,15 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { tokenLogin } from "../features/auth/authSlice";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const Payment = () => {
 	const [step, setStep] = useState(1);
 	const [selectedAddress, setSelectedAddress] = useState(null);
 	const [paymentMethod, setPaymentMethod] = useState("");
-	console.log("kkkkkkkkkkykyky", selectedAddress, paymentMethod);
+	const [allAddress2, setAlladdress2] = useState();
+	const [addressList, setAddressList] = useState();
+	let dispatch = useDispatch();
+	const location = useLocation();
+	const id = location?.state?.id;
+	const navigate = useNavigate();
 	const cartData = useSelector((state) => state?.products?.cart);
 	const cartData2 = useSelector((state) => state?.products);
 	const allAddress = useSelector((state) => state?.auth?.user_addresses);
-	console.log("address", allAddress);
+	useEffect(() => {
+		getAlladress();
+		setAlladdress2(allAddress);
+	}, [allAddress]);
 	//totalAmount;
 
 	// const addresses = [
@@ -26,7 +38,93 @@ const Payment = () => {
 	console.log("selectedAddress", selectedAddress);
 	const nextStep = () => setStep(step + 1);
 	const prevStep = () => setStep(step - 1);
+	async function getAlladress() {
+		let add2 = await axios.post(
+			"http://localhost:5000/api/user_addresses",
+			{
+				// user: id,
+				user: "69a1b2e11a878ced01e3f469",
+			},
+		);
+		console.log("aad", add2);
+		//setAddressList(add2?.data?.map(({ user, ...rest }) => rest));
+	}
+	console.log("addresssList", allAddress2);
+	async function deleteAddress(id) {
+		console.log("idddd", id);
+		let deletedAddress = await axios.delete(
+			`http://localhost:5000/api/address/${id}`,
+		);
+		//console.log("deletedAddress", deletedAddress);
+		let all = await getAlladress();
+		console.log("all", all);
+		let all2 = allAddress2?.filter(
+			(curr) => curr._id !== deletedAddress?.data?._id,
+		);
+		setAlladdress2(all2);
+		console.log("deletedAddress", all2);
+	}
 
+	const handlePayment = async () => {
+		try {
+			// 1. Create order
+			const { data } = await axios.post(
+				"http://localhost:5000/api/payment/create-order",
+				{ amount: 500 },
+			);
+			console.log("paymentData", data);
+			const order = data.order;
+
+			// 2. Open Razorpay
+			const options = {
+				key: "rzp_test_SSuHvi6tcJdFE5",
+				amount: order.amount,
+				currency: "INR",
+				name: "My Shop",
+				description: "Test Payment",
+				order_id: order.id,
+				handler: async function (response) {
+					// 3. Verify payment
+					//console.log("FRONTEND RESPONSE:", response);
+
+					const verify = await axios.post(
+						"http://localhost:5000/api/payment/verify-payment",
+						{
+							razorpay_order_id:
+								response.razorpay_order_id,
+							razorpay_payment_id:
+								response.razorpay_payment_id,
+							razorpay_signature:
+								response.razorpay_signature,
+						},
+					);
+					console.log("verificationData", verify);
+					if (verify?.data?.success === true) {
+						navigate("/success", {
+							state: {
+								paymentId: response.razorpay_payment_id,
+							},
+						});
+					}
+				},
+
+				prefill: {
+					name: "Raju Kumar",
+					email: "raju@gmail.com",
+					contact: "9999999999",
+				},
+
+				theme: {
+					color: "#2874f0", // Flipkart blue 😄
+				},
+			};
+			//console.log("verfyData", verify);
+			const rzp = new window.Razorpay(options);
+			rzp.open();
+		} catch (error) {
+			console.log(error);
+		}
+	};
 	return (
 		<div className="min-h-screen bg-gray-100 py-10 px-4">
 			<Link
@@ -59,7 +157,7 @@ const Payment = () => {
 							Select Address
 						</h2>
 						<div className="space-y-4">
-							{allAddress?.map((addr) => (
+							{allAddress2?.map((addr) => (
 								<div
 									key={addr._id}
 									className={`border p-4 rounded-lg flex justify-between items-start cursor-pointer ${
@@ -106,7 +204,13 @@ const Payment = () => {
 											Edit
 										</Link>
 
-										<button className="text-red-500 text-sm">
+										<button
+											onClick={() =>
+												deleteAddress(
+													addr._id,
+												)
+											}
+											className="text-red-500 text-sm">
 											Delete
 										</button>
 									</div>
@@ -216,7 +320,7 @@ const Payment = () => {
 							</button>
 
 							<button
-								onClick={nextStep}
+								onClick={() => handlePayment()}
 								className="bg-green-500 text-white px-6 py-2 rounded-lg">
 								Confirm Order
 							</button>

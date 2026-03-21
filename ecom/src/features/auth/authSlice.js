@@ -22,13 +22,21 @@ const authSlice = createSlice({
 			// }
 		},
 		tokenLogin: (state, action) => {
-			console.log("tokenData", action.payload);
-			if (action.payload !== undefined) {
-				// state == { ...state, isLogin: true };
-				state.isLogin = true;
-				state.user = action.payload.data;
-				state.user_addresses = action.payload.address;
-			}
+			console.log("payload", action.payload);
+			let onlyAddress = action?.payload?.address?.map((user) => {
+				const obj = { ...user };
+				delete obj.user;
+				return obj;
+			});
+			console.log("addressData", onlyAddress);
+			state == { ...state, isLogin: true };
+			state.isLogin = true;
+			state.user = action.payload.data;
+			state.user_addresses = onlyAddress;
+			// return {
+			// 	...state,
+			// 	user_addresses: onlyAddress,
+			// };
 		},
 	},
 });

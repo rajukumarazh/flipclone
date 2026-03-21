@@ -13,6 +13,7 @@ const Login = () => {
 		email: "",
 		password: "",
 	});
+	console.log("login", loginData);
 	async function handleLogin() {
 		let islogin = await axios.post(
 			"http://localhost:5000/api/login",
@@ -25,13 +26,12 @@ const Login = () => {
 		// 	},
 		// );
 
-		// console.log("address", add);
+		console.log("address", islogin);
 		dispatch(handleLogin2(islogin?.data));
-		navigate("/");
-
-		if (islogin) {
+		if (islogin?.data?.login === true) {
 			localStorage.setItem("tkn", islogin.data.token);
-			console.log("address", add);
+			//console.log("address", add);
+			navigate("/");
 		}
 	}
 

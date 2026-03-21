@@ -4,10 +4,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../model/User");
 const Address = require("../model/Address");
 const authMiddleware = require("../middleware/authMiddleware");
-// router.get("/", async (req, res) => {
-// 	const products = await Product.find();
-// 	res.json(products);
-// });
 
 router.post("/signup", async (req, res) => {
 	const newUser = new User(req.body);
@@ -29,25 +25,49 @@ router.post("/login", async (req, res) => {
 router.get("/islogin", authMiddleware, async (req, res) => {
 	const user = await User.findOne({ email: req.user.email });
 	res.json(user);
-	//console.log("user", user);
+	console.log("userlgoindata", user);
 });
 router.post("/address", async (req, res) => {
-	console.log("res", req.body);
+	//console.log("res", req.body);
 	const newAddress = new Address(req.body);
 	const saved = await newAddress.save();
 	//console.log("req.body", saved);
 	res.json(saved);
 });
 router.post("/user_addresses", async (req, res) => {
-	console.log("user", req.body.user_id);
+	console.log("user", req.body);
 	try {
+		const userId = req.body.user || req.body.user_id;
 		const addresses = await Address.find({
-			user: req.body.user_id,
+			user: userId,
 		}).populate("user");
 
-		//console.log("addresses:", addresses);
+		console.log("addresses:", addresses);
 
 		res.json(addresses);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+router.put("/address/:id", async (req, res) => {
+	console.log("kkkkkk", req.body.adress);
+	const updated = await Address.findOneAndUpdate(
+		{ _id: req.params.id },
+		req.body.adress,
+		{
+			returnDocument: "after",
+		},
+	);
+	console.log("RES", updated);
+	res.json(updated);
+});
+router.delete("/address/:id", async (req, res) => {
+	try {
+		const id = req.params.id; // get id from URL
+		// console.log("dkfdkf", deleted);
+		const deleted = await Address.findByIdAndDelete(id);
+		// console.log("dkfdkf", deleted);
+		res.json(deleted); // send deleted document back
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}

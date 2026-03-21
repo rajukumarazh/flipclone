@@ -13,52 +13,62 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import MyOrders from "./Pages/MyOrders";
 import Checkout from "./Pages/Checkout";
+import PaymentSuccess from "./Pages/PaymentSuccess";
 import Payment from "./Pages/Payment";
 import axios from "axios";
+import Orders from "./Pages/Orders";
 import { handleLogin2, tokenLogin } from "./features/auth/authSlice";
 function App() {
-	// const pd = useSelector((state) => state?.products?.allProducts);
+	const pd = useSelector((state) => state?.auth);
+
 	const [islogin, setIslogin] = useState(false);
 	let token = localStorage.getItem("tkn");
 	const dispatch = useDispatch();
 	useEffect(() => {
 		CheckinLoginUser();
-	}, []);
-
+	}, [token]);
+	//console.log("tokkken", token);
 	async function CheckinLoginUser() {
-		let currentUser = await axios.get(
-			"http://localhost:5000/api/islogin",
-			{
-				headers: {
-					Authorization: `${token}`,
+		// if (!token) {
+		// 	navigate("/login");
+		// }
+		if (token !== null) {
+			let currentUser = await axios.get(
+				"http://localhost:5000/api/islogin",
+				{
+					headers: {
+						Authorization: `${token}`,
+						//Authorization: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXNzd29yZCI6IjEiLCJlbWFpbCI6InIiLCJpYXQiOjE3NzMyNzk0ODAsImV4cCI6MTc3MzM2NTg4MH0.9j2CyHm5n6AUKLyZMRumzkTbslzOfcZgo7rohDtFKbU`,
+					},
 				},
-			},
-		);
-
-		let add2 = await axios.post(
-			"http://localhost:5000/api/user_addresses",
-			{
-				user_id: currentUser?.user?._id,
-			},
-		);
-		let onlyAddress = await add2?.data?.map((user) => {
-			const obj = { ...user };
-			delete obj.user;
-			return obj;
-		});
-		console.log("app.js", currentUser);
-		//console.log("address", add);
-		if (currentUser?.data?.name) {
-			dispatch(
-				tokenLogin({
-					data: currentUser.data,
-					address: onlyAddress,
-				}),
 			);
+			console.log("currentUser", currentUser);
+
+			let add2 = await axios.post(
+				"http://localhost:5000/api/user_addresses",
+				{
+					user: currentUser?.data?._id,
+				},
+			);
+			//	console.log("kraju", add2);
+			let onlyAddress = await add2?.data?.map((user) => {
+				const obj = { ...user };
+				delete obj.user;
+				return obj;
+			});
+
+			if (currentUser?.data?._id) {
+				dispatch(
+					tokenLogin({
+						data: currentUser.data,
+						address: onlyAddress,
+						//address: add2?.data,
+					}),
+				);
+			}
 		}
-		// .then((res) => console.log("res", res.data))
-		// .catch((err) => console.log("error", err));
 	}
+	// console.log("pppp", pd);
 	return (
 		<BrowserRouter>
 			<Layout>
@@ -96,6 +106,14 @@ function App() {
 						<Route
 							path="/payment"
 							element={<Payment />}
+						/>
+						<Route
+							path="/success"
+							element={<PaymentSuccess />}
+						/>
+						<Route
+							path="/orders"
+							element={<Orders />}
 						/>
 					</Route>
 					{/* element=

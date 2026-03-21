@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { tokenLogin } from "../features/auth/authSlice";
 const Checkout = () => {
 	const [adress, setAddress] = useState({
 		name: "",
@@ -10,9 +11,12 @@ const Checkout = () => {
 		zip: "",
 		phone: "",
 	});
+	const dispatch = useDispatch();
+	const [addresses, setAddresses] = useState([]);
+	const [selectedAddress, setSelectedAddress] = useState(null);
 	const location = useLocation();
-	let id = location.state.id;
-	console.log("iiiiid", id);
+	var id = location?.state?.id;
+	console.log("kkkkkkkk", id);
 	const navigate = useNavigate();
 	let userdata = useSelector((state) => state?.auth);
 	console.log("used", userdata);
@@ -23,12 +27,68 @@ const Checkout = () => {
 			// user_id: userdata?._id,
 			user: userdata?.user?._id,
 		});
+
+		console.log("newAddressSave", dt);
+		let add2 = await axios.post(
+			"http://localhost:5000/api/user_addresses",
+			{
+				// user: id,
+				user: "69a1b2e11a878ced01e3f469",
+			},
+		);
+		dispatch(
+			tokenLogin({
+				address: add2?.data,
+				data: add2?.data[0]?.user,
+			}),
+		);
+
 		if (dt) {
+			navigate("/payment", { state: { id: userdata?.user?.id } });
+		}
+	}
+	async function updateAddress() {
+		let dta = await axios.put(`http://localhost:5000/api/address/${id}`, {
+			adress,
+		});
+		let add2 = await axios.post(
+			"http://localhost:5000/api/user_addresses",
+			{
+				// user: id,
+				user: "69a1b2e11a878ced01e3f469",
+			},
+		);
+		dispatch(
+			tokenLogin({
+				address: add2?.data,
+				data: add2?.data[0]?.user,
+			}),
+		);
+		console.log("allAddress", add2);
+		console.log("updatedAddress", dta);
+
+		if (dta) {
 			navigate("/payment");
 		}
-		console.log("adddress", dt);
 	}
+	useEffect(() => {
+		let filterAddress = userdata?.user_addresses?.filter((item) => {
+			return item._id === location?.state?.id;
+		});
+		if (filterAddress.length > 0) {
+			const addr = filterAddress[0];
 
+			setSelectedAddress(addr);
+
+			setAddress({
+				name: addr.name,
+				phone: addr.phone,
+				address: addr.address,
+				zip: addr.zip,
+			});
+		}
+	}, [userdata, id]);
+	console.log("kkkkkk", selectedAddress, adress);
 	return (
 		<div className="max-w-5xl mx-auto px-4 py-8">
 			<h2 className="text-2xl font-semibold mb-6">Address</h2>
@@ -37,6 +97,7 @@ const Checkout = () => {
 				<input
 					className="w-full border p-3 rounded"
 					placeholder="Full Name"
+					value={adress.name}
 					onChange={(e) =>
 						setAddress({ ...adress, name: e.target.value })
 					}
@@ -45,6 +106,7 @@ const Checkout = () => {
 					<input
 						className=" w-1/8 border p-3 rounded"
 						placeholder="Address"
+						value={adress.address}
 						onChange={(e) =>
 							setAddress({
 								...adress,
@@ -55,6 +117,7 @@ const Checkout = () => {
 					<input
 						className="w-7/8 border p-3 rounded"
 						placeholder="Zip"
+						value={adress.zip}
 						onChange={(e) =>
 							setAddress({
 								...adress,
@@ -66,16 +129,25 @@ const Checkout = () => {
 				<input
 					className="w-full border p-3 rounded"
 					placeholder="Phone"
+					value={adress.phone}
 					onChange={(e) =>
 						setAddress({ ...adress, phone: e.target.value })
 					}
 				/>
 
-				<button
-					onClick={() => saveAddress()}
-					className="bg-green-600 text-white w-full py-3 rounded">
-					Save Address
-				</button>
+				{!id ? (
+					<button
+						onClick={() => saveAddress()}
+						className="bg-green-600 text-white w-full py-3 rounded">
+						Save Address
+					</button>
+				) : (
+					<button
+						onClick={() => updateAddress()}
+						className="bg-green-600 text-white w-full py-3 rounded">
+						Update Address
+					</button>
+				)}
 			</div>
 		</div>
 	);
