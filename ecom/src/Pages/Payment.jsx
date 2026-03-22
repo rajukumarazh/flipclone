@@ -18,12 +18,16 @@ const Payment = () => {
 	const cartData = useSelector((state) => state?.products?.cart);
 	const cartData2 = useSelector((state) => state?.products);
 	const allAddress = useSelector((state) => state?.auth?.user_addresses);
+	const currentUser = useSelector((state) => state?.auth);
+	const totalAmount = useSelector((state) => state?.products?.totalAmount);
+	console.log("totalAmount", totalAmount);
 	useEffect(() => {
 		getAlladress();
 		setAlladdress2(allAddress);
 	}, [allAddress]);
 	//totalAmount;
-
+	console.log("cartData", cartData);
+	console.log("user", currentUser);
 	// const addresses = [
 	// 	"Raju Kumar, Lucknow, Uttar Pradesh",
 	// 	"Office Address, Gomti Nagar, Lucknow",
@@ -43,13 +47,13 @@ const Payment = () => {
 			"http://localhost:5000/api/user_addresses",
 			{
 				// user: id,
-				user: "69a1b2e11a878ced01e3f469",
+				user: currentUser?.user?._id,
 			},
 		);
 		console.log("aad", add2);
 		//setAddressList(add2?.data?.map(({ user, ...rest }) => rest));
 	}
-	console.log("addresssList", allAddress2);
+	//console.log("addresssList", allAddress2);
 	async function deleteAddress(id) {
 		console.log("idddd", id);
 		let deletedAddress = await axios.delete(
@@ -70,7 +74,7 @@ const Payment = () => {
 			// 1. Create order
 			const { data } = await axios.post(
 				"http://localhost:5000/api/payment/create-order",
-				{ amount: 500 },
+				{ amount: totalAmount },
 			);
 			console.log("paymentData", data);
 			const order = data.order;
@@ -96,22 +100,48 @@ const Payment = () => {
 								response.razorpay_payment_id,
 							razorpay_signature:
 								response.razorpay_signature,
+							products: cartData,
+							totalAmount: cartData2?.totalAmount,
+							address_id: selectedAddress._id,
+							user_id: currentUser?.user?._id,
 						},
 					);
-					console.log("verificationData", verify);
+					//let saveOrder = async axios.post("http://localhost:5000/api/order");
+					//console.log("verificationData", verify);
 					if (verify?.data?.success === true) {
+						// async function saveOrder() {
+						// 	let savedOrder = await axios.post(
+						// 		"http://localhost:5000/api/create_order",
+						// 		{
+						// 			paymentId:
+						// 				response.razorpay_payment_id,
+						// 			user_id: id,
+						// 			address_id: selectedAddress?._id,
+						// 			product_id: cartData?.map(
+						// 				(curr) => curr?.id,
+						// 			),
+						// 		},
+						// 	);
+						// 	console.log("savedOrder", savedOrder);
+						// }
+						// saveOrder();
 						navigate("/success", {
 							state: {
 								paymentId: response.razorpay_payment_id,
+								user_id: id,
+								// address_id: selectedAddress?._id,
+								// product_id: cartData?.map(
+								// 	(curr) => curr?.id,
+								// ),
 							},
 						});
 					}
 				},
 
 				prefill: {
-					name: "Raju Kumar",
-					email: "raju@gmail.com",
-					contact: "9999999999",
+					name: currentUser?.user?.name,
+					email: currentUser?.user?.email,
+					contact: "999999999",
 				},
 
 				theme: {
@@ -125,6 +155,7 @@ const Payment = () => {
 			console.log(error);
 		}
 	};
+
 	return (
 		<div className="min-h-screen bg-gray-100 py-10 px-4">
 			<Link

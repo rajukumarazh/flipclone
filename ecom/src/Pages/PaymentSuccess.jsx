@@ -3,9 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 const PaymentSuccess = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
-
 	const paymentId = location.state?.paymentId || "N/A";
-
+	const userId = location.state?.user_id || "N/A";
 	return (
 		<div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
 			<div className="bg-white shadow-lg rounded-2xl p-8 max-w-md w-full text-center">
@@ -38,6 +37,10 @@ const PaymentSuccess = () => {
 
 				{/* Payment Details */}
 				<div className="bg-gray-50 p-4 rounded-lg mb-4 text-left">
+					<p className="text-sm text-gray-500">user ID</p>
+					<p className="font-semibold text-gray-800 break-all">
+						{userId}
+					</p>
 					<p className="text-sm text-gray-500">Payment ID</p>
 					<p className="font-semibold text-gray-800 break-all">
 						{paymentId}
@@ -47,7 +50,7 @@ const PaymentSuccess = () => {
 				{/* Buttons */}
 				<div className="flex flex-col gap-3">
 					<button
-						onClick={() => navigate("/orders")}
+						onClick={() => navigate("/order")}
 						className="bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
 						View Orders
 					</button>

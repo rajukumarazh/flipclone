@@ -9,6 +9,7 @@ const Cart = () => {
 	const cartData = useSelector((state) => state?.products?.cart);
 	const totalAmount = useSelector((state) => state?.products?.totalAmount);
 	console.log("totalAmount", totalAmount);
+	console.log("cartData", cartData);
 	let totalPrice = cartData?.reduce(
 		(acc, item) => acc + item.price * item.quantity,
 		0,

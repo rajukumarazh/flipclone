@@ -1,49 +1,52 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import OrderCard from "../components/OrderCard";
-
-const orders = [
-	{
-		id: "OD123456789",
-		date: "20 Feb 2026",
-		status: "Delivered",
-		totalAmount: 24999,
-		items: [
-			{
-				name: "iPhone 14",
-				image: "/images/iphone.jpg",
-				price: 24999,
-			},
-		],
-	},
-	{
-		id: "OD987654321",
-		date: "18 Feb 2026",
-		status: "Pending",
-		totalAmount: 1499,
-		items: [
-			{
-				name: "Nike Running Shoes",
-				image: "/images/shoes.jpg",
-				price: 1499,
-			},
-		],
-	},
-];
+import axios from "axios";
+import { useSelector } from "react-redux";
 
 const MyOrders = () => {
+	const currentUser = useSelector((state) => state?.auth);
+
+	const [allOrder, setAllorder] = useState([]); // ✅ fix
+
+	useEffect(() => {
+		if (currentUser?.user?._id) {
+			getAllMyOrder();
+		}
+	}, [currentUser]);
+
+	async function getAllMyOrder() {
+		try {
+			const userid = currentUser?.user?._id;
+
+			const res = await axios.get(
+				`http://localhost:5000/api/myorder/${userid}`,
+			);
+
+			console.log("allOrders", res.data);
+
+			setAllorder(res.data); // ✅ fix
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
 	return (
 		<div className="bg-gray-100 min-h-screen py-6">
 			<div className="max-w-6xl mx-auto px-4">
 				<h1 className="text-2xl font-semibold mb-6">My Orders</h1>
 
-				<div className="space-y-4">
-					{orders.map((order) => (
-						<OrderCard
-							key={order.id}
-							order={order}
-						/>
-					))}
-				</div>
+				{allOrder.length > 0 ? (
+					<div className="space-y-4">
+						{allOrder.map((order) => (
+							<OrderCard
+								key={order._id} // ✅ fix
+								order={order}
+							/>
+						))}
+					</div>
+				) : (
+					<p>No orders found</p> // ✅ better message
+				)}
 			</div>
 		</div>
 	);

@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const razorpay = require("../config/razorpay");
 //const razoypay=require("../config/razorpay")
+const Order = require("../model/Order");
 const crypto = require("crypto");
 router.post("/create-order", async (req, res) => {
 	try {
@@ -41,9 +42,18 @@ router.post("/create-order", async (req, res) => {
 	}
 });
 
-router.post("/verify-payment", (req, res) => {
-	const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
-		req.body;
+router.post("/verify-payment", async (req, res) => {
+	// const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+	// 	req.body;
+	const {
+		razorpay_order_id,
+		razorpay_payment_id,
+		razorpay_signature,
+		products,
+		totalAmount,
+		address_id,
+		user_id,
+	} = req.body;
 	console.log("codddd", req.body);
 	const body = razorpay_order_id + "|" + razorpay_payment_id;
 
@@ -53,9 +63,18 @@ router.post("/verify-payment", (req, res) => {
 		.digest("hex");
 	console.log("expectedSignature", expectedSignature);
 	if (expectedSignature === razorpay_signature) {
+		//SAVE ORDER HERE
+		await Order.create({
+			user_id: user_id, // if using auth
+			products: products,
+			totalAmount: totalAmount,
+			payment_id: razorpay_payment_id,
+			address_id: address_id,
+			status: "paid",
+		});
 		return res.json({
 			success: true,
-			message: "Payment verified",
+			message: "Payment verified and order Created successfully",
 		});
 	} else {
 		return res.status(400).json({
