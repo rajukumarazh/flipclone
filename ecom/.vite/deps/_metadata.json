@@ -2,7 +2,7 @@
   "hash": "0ea7a002",
   "configHash": "f71a775f",
   "lockfileHash": "1d2aa16d",
-  "browserHash": "195ae10d",
+  "browserHash": "b053c84b",
   "optimized": {
     "@reduxjs/toolkit": {
       "src": "../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs",

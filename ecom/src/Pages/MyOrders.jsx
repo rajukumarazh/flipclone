@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import OrderCard from "../components/OrderCard";
 import axios from "axios";
-import { useSelector } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
+import { handleMyorder } from "../features/orders/orderSlice";
 const MyOrders = () => {
 	const currentUser = useSelector((state) => state?.auth);
-
+	const currentOrders = useSelector((state) => state);
+	const dispatch = useDispatch();
 	const [allOrder, setAllorder] = useState([]); // ✅ fix
 
 	useEffect(() => {
@@ -13,7 +14,7 @@ const MyOrders = () => {
 			getAllMyOrder();
 		}
 	}, [currentUser]);
-
+	console.log("hello", currentOrders);
 	async function getAllMyOrder() {
 		try {
 			const userid = currentUser?.user?._id;
@@ -23,7 +24,7 @@ const MyOrders = () => {
 			);
 
 			console.log("allOrders", res.data);
-
+			dispatch(handleMyorder(res.data));
 			setAllorder(res.data); // ✅ fix
 		} catch (error) {
 			console.error(error);

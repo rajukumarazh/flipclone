@@ -10,11 +10,15 @@ const OrderSchema = new mongoose.Schema(
 				quantity: Number,
 				price: Number,
 				image: String,
+				id: Number,
 			},
 		],
 		totalAmount: Number,
 		payment_id: String,
-		address_id: mongoose.Schema.Types.ObjectId,
+		address_id: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Address",
+		},
 	},
 	{ timestamps: true },
 );

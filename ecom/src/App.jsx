@@ -18,6 +18,7 @@ import Payment from "./Pages/Payment";
 import axios from "axios";
 import Orders from "./Pages/Orders";
 import { handleLogin2, tokenLogin } from "./features/auth/authSlice";
+import OrderDetails from "./components/OrderDetails";
 function App() {
 	const pd = useSelector((state) => state?.auth);
 
@@ -85,6 +86,11 @@ function App() {
 						// path="/product/:id"
 						path="details/:id"
 						element={<ProductDetails />}
+					/>
+					<Route
+						// path="/product/:id"
+						path="orderdetails/:id"
+						element={<OrderDetails />}
 					/>
 					<Route
 						path="/cart"

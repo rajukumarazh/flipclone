@@ -18,7 +18,7 @@ router.get("/myorder/:user_id", async (req, res) => {
 
 		// ✅ Fetch orders with details
 		const orders = await Order.find({ user_id: userid })
-			.populate("products.product_id") // get product details
+			// .populate("products.product_id") // get product details
 			.populate("address_id"); // get address details
 
 		res.json(orders);

@@ -1,8 +1,9 @@
 import React from "react";
+import { Link } from "react-router";
 
 const OrderCard = ({ order }) => {
-	console.log("order", order);
-
+	//console.log("order", order);
+	let product = order?.products;
 	const getStatusColor = (status) => {
 		if (status === "delivered") return "text-green-600";
 		if (status === "cancelled") return "text-red-600";
@@ -18,7 +19,8 @@ const OrderCard = ({ order }) => {
 						Order ID: {order?._id}
 					</p>
 					<p className="text-sm text-gray-500">
-						{new Date(order?.createdAt).toDateString()}
+						{/* {new Date(order?.createdAt).toDateString()} */}
+						Date: {order?.createdAt}
 					</p>
 				</div>
 
@@ -30,7 +32,7 @@ const OrderCard = ({ order }) => {
 						● {order?.status}
 					</p>
 					<p className="text-sm text-gray-600">
-						₹ {order?.totalAmount}
+						Total Amount ₹ {order?.totalAmount}
 					</p>
 				</div>
 			</div>
@@ -42,16 +44,14 @@ const OrderCard = ({ order }) => {
 					className="flex items-center gap-4 mb-3">
 					{/* Image */}
 					<img
-						src={item?.product_id?.image}
-						alt={item?.product_id?.title}
+						src={item?.image}
+						alt={item?.title}
 						className="w-20 h-20 object-cover border rounded"
 					/>
 
 					{/* Info */}
 					<div className="flex-1">
-						<h2 className="font-medium">
-							{item?.product_id?.title}
-						</h2>
+						<h2 className="font-medium">{item?.title}</h2>
 
 						<p className="text-gray-600 text-sm">
 							Qty: {item?.quantity}
@@ -61,11 +61,14 @@ const OrderCard = ({ order }) => {
 							₹ {item?.price}
 						</p>
 					</div>
-
+					{console.log("orders", order?.products)}
 					{/* Action */}
-					<button className="text-blue-600 hover:underline text-sm">
+					<Link
+						to={`/orderdetails/${order._id}`}
+						state={product} // 👈 send full object
+						className="text-blue-600 hover:underline text-sm">
 						View Details
-					</button>
+					</Link>
 				</div>
 			))}
 		</div>

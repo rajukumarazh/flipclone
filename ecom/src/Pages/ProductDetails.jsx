@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 const ProductDetails = () => {
 	const { id } = useParams();
+	console.log("sendedid", id);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [showToast, setShowToast] = useState(false);
@@ -15,7 +16,7 @@ const ProductDetails = () => {
 
 	const product = products?.find((item) => item.id === Number(id));
 	let currentCartProduct = cart?.find((item) => item.id == Number(id));
-
+	console.log("currentproduct", products);
 	const handleCartItem = () => {
 		dispatch(addToCart(product));
 		setShowToast(true);
