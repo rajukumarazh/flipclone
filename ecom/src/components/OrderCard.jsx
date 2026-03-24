@@ -38,6 +38,7 @@ const OrderCard = ({ order }) => {
 			</div>
 
 			{/* Products */}
+
 			{order?.products?.map((item, index) => (
 				<div
 					key={index}
@@ -69,6 +70,9 @@ const OrderCard = ({ order }) => {
 						className="text-blue-600 hover:underline text-sm">
 						View Details
 					</Link>
+					<button className="text-red-600 hover:underline text-sm">
+						Cancel
+					</button>
 				</div>
 			))}
 		</div>

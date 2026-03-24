@@ -1,137 +1,115 @@
 import React from "react";
 
-export default function FilterSideBar() {
+export default function FilterSideBar({ filters, setFilters }) {
+	const categories = ["Mobiles", "Laptops", "Fashion"];
+
+	const price = ["Under ₹100", "₹100 - ₹500", "Above ₹500"];
+	console.log("filters", filters);
+	// ✅ checkbox (multiple)
+	const handleCheckbox = (cat) => {
+		setFilters((prev) => {
+			let updated = [...prev.categories];
+
+			if (updated.includes(cat)) {
+				updated = updated.filter((c) => c !== cat);
+			} else {
+				updated.push(cat);
+			}
+
+			return {
+				...prev,
+				categories: updated,
+			};
+		});
+	};
+
+	// ✅ radio (single)
+	const handleRadio = (key, value) => {
+		setFilters((prev) => ({
+			...prev,
+			[key]: value,
+		}));
+	};
+
 	return (
 		<div className="w-64 bg-white p-4 rounded shadow h-fit">
 			<h2 className="text-lg font-semibold mb-4 border-b pb-2">
 				Filters
 			</h2>
 
-			{/* Category Filter */}
+			{/* Category */}
 			<div className="mb-4">
 				<details
 					open
 					className="group">
-					<summary className="cursor-pointer font-medium text-gray-800 mb-2">
+					<summary className="cursor-pointer font-medium mb-2">
 						Category
 					</summary>
-					<div className="space-y-2 text-sm text-gray-600 mt-2">
-						<label className="flex items-center gap-2">
+
+					{categories.map((cat, i) => (
+						<label
+							key={i}
+							className="flex items-center gap-2">
 							<input
 								type="checkbox"
-								className="accent-blue-600"
+								checked={filters.categories.includes(
+									cat,
+								)}
+								onChange={() => handleCheckbox(cat)}
 							/>
-							Mobiles
+							{cat}
 						</label>
-						<label className="flex items-center gap-2">
-							<input
-								type="checkbox"
-								className="accent-blue-600"
-							/>
-							Laptops
-						</label>
-						<label className="flex items-center gap-2">
-							<input
-								type="checkbox"
-								className="accent-blue-600"
-							/>
-							Fashion
-						</label>
-					</div>
+					))}
 				</details>
 			</div>
 
-			{/* Price Filter */}
+			{/* Price */}
 			<div className="mb-4">
 				<details className="group">
-					<summary className="cursor-pointer font-medium text-gray-800 mb-2">
+					<summary className="cursor-pointer font-medium mb-2">
 						Price
 					</summary>
-					<div className="space-y-2 text-sm text-gray-600 mt-2">
-						<label className="flex items-center gap-2">
+
+					{price.map((prc, i) => (
+						<label
+							key={i}
+							className="flex items-center gap-2">
 							<input
 								type="radio"
 								name="price"
-								className="accent-blue-600"
+								checked={filters.price === prc}
+								onChange={() =>
+									handleRadio("price", prc)
+								}
 							/>
-							Under ₹10,000
+							{prc}
 						</label>
-						<label className="flex items-center gap-2">
-							<input
-								type="radio"
-								name="price"
-								className="accent-blue-600"
-							/>
-							₹10,000 - ₹50,000
-						</label>
-						<label className="flex items-center gap-2">
-							<input
-								type="radio"
-								name="price"
-								className="accent-blue-600"
-							/>
-							Above ₹50,000
-						</label>
-					</div>
+					))}
 				</details>
 			</div>
 
-			{/* Brand Filter */}
-			<div className="mb-4">
-				<details className="group">
-					<summary className="cursor-pointer font-medium text-gray-800 mb-2">
-						Brand
-					</summary>
-					<div className="space-y-2 text-sm text-gray-600 mt-2">
-						<label className="flex items-center gap-2">
-							<input
-								type="checkbox"
-								className="accent-blue-600"
-							/>
-							Apple
-						</label>
-						<label className="flex items-center gap-2">
-							<input
-								type="checkbox"
-								className="accent-blue-600"
-							/>
-							Samsung
-						</label>
-						<label className="flex items-center gap-2">
-							<input
-								type="checkbox"
-								className="accent-blue-600"
-							/>
-							Sony
-						</label>
-					</div>
-				</details>
-			</div>
-
-			{/* Rating Filter */}
+			{/* Rating */}
 			<div>
 				<details className="group">
-					<summary className="cursor-pointer font-medium text-gray-800 mb-2">
+					<summary className="cursor-pointer font-medium mb-2">
 						Customer Rating
 					</summary>
-					<div className="space-y-2 text-sm text-gray-600 mt-2">
-						<label className="flex items-center gap-2">
+
+					{["4", "3"].map((rate) => (
+						<label
+							key={rate}
+							className="flex items-center gap-2">
 							<input
 								type="radio"
 								name="rating"
-								className="accent-blue-600"
+								checked={filters.rating === rate}
+								onChange={() =>
+									handleRadio("rating", rate)
+								}
 							/>
-							4★ & above
+							{rate}★ & above
 						</label>
-						<label className="flex items-center gap-2">
-							<input
-								type="radio"
-								name="rating"
-								className="accent-blue-600"
-							/>
-							3★ & above
-						</label>
-					</div>
+					))}
 				</details>
 			</div>
 		</div>

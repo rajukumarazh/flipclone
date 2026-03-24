@@ -7,7 +7,7 @@ const Home = () => {
 		<div className="bg-gray-100">
 			{/* Hero Section */}
 			<HeroCarousel />
-
+			{/* <FilterSideBar /> */}
 			{/* Trending Section */}
 			<section className="max-w-7xl mx-auto px-4 mt-8">
 				<div className="bg-white p-6 rounded shadow">
