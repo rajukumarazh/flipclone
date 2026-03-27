@@ -25,13 +25,9 @@ const Payment = () => {
 		getAlladress();
 		setAlladdress2(allAddress);
 	}, [allAddress]);
-	//totalAmount;
+
 	console.log("cartData", cartData);
 	console.log("user", currentUser);
-	// const addresses = [
-	// 	"Raju Kumar, Lucknow, Uttar Pradesh",
-	// 	"Office Address, Gomti Nagar, Lucknow",
-	// ];
 
 	const paymentOptions = [
 		"UPI",
@@ -61,7 +57,7 @@ const Payment = () => {
 		);
 		//console.log("deletedAddress", deletedAddress);
 		let all = await getAlladress();
-		console.log("all", all);
+		//console.log("all", all);
 		let all2 = allAddress2?.filter(
 			(curr) => curr._id !== deletedAddress?.data?._id,
 		);
@@ -159,7 +155,11 @@ const Payment = () => {
 	return (
 		<div className="min-h-screen bg-gray-100 py-10 px-4">
 			<Link
-				to={"/checkout"}
+				to="/checkout"
+				state={{
+					id: currentUser?.user?._id,
+					from: "/payment",
+				}}
 				className="mt-6 bg-orange-500 text-white px-6 py-2 rounded-lg disabled:bg-gray-300">
 				Add Address
 			</Link>
@@ -230,7 +230,10 @@ const Payment = () => {
 									<div className="flex gap-3">
 										<Link
 											to="/checkout"
-											state={{ id: addr._id }}
+											state={{
+												id: addr?._id,
+												from: "/payment",
+											}}
 											className="text-blue-500 text-sm">
 											Edit
 										</Link>

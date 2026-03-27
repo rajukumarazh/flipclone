@@ -1,20 +1,14 @@
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useState } from "react";
 const CategoryBar = () => {
 	const navigate = useNavigate();
 	const [input, setInput] = useState("");
-	const categories = [
-		"Electronics",
-		"Fashion",
-		"Home",
-		"Appliances",
-		"Beauty",
-		"Toys",
-		"Grocery",
-		"Mobiles",
-		"Furniture",
-		"Travel",
-	];
+	const product = useSelector((state) => state?.products);
+	let categories = product?.allProducts?.map((cat) => cat?.category);
+	const uniqueCategories = [...new Set(categories)];
+	console.log("products", product);
+
 	const handleSearch = (e) => {
 		if (e.key === "Enter") {
 			navigate(`/products?q=${input}`);
@@ -46,7 +40,7 @@ const CategoryBar = () => {
 			{/* 🧭 Categories */}
 			<div className="max-w-7xl mx-auto px-4">
 				<div className="flex overflow-x-auto gap-8 py-3 text-sm font-medium text-gray-700 no-scrollbar">
-					{categories.map((item, index) => (
+					{uniqueCategories.map((item, index) => (
 						<div
 							key={item}
 							onClick={() => handleCategory(item)}

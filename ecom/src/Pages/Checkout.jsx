@@ -15,12 +15,13 @@ const Checkout = () => {
 	const [addresses, setAddresses] = useState([]);
 	const [selectedAddress, setSelectedAddress] = useState(null);
 	const location = useLocation();
-	var id = location?.state?.id;
+	var { id, from } = location?.state;
 	console.log("kkkkkkkk", id);
+	console.log("states", location?.state);
 	const navigate = useNavigate();
 	let userdata = useSelector((state) => state?.auth);
 	console.log("used", userdata);
-
+	//console.log("from", from);
 	async function saveAddress() {
 		let dt = await axios.post("http://localhost:5000/api/address", {
 			...adress,
@@ -28,7 +29,6 @@ const Checkout = () => {
 			user: userdata?.user?._id,
 		});
 
-		console.log("newAddressSave", dt);
 		let add2 = await axios.post(
 			"http://localhost:5000/api/user_addresses",
 			{
@@ -43,7 +43,9 @@ const Checkout = () => {
 			}),
 		);
 
-		if (dt) {
+		if (location?.state?.from === "/profile") {
+			navigate("/profile");
+		} else {
 			navigate("/payment", { state: { id: userdata?.user?.id } });
 		}
 	}
@@ -135,7 +137,7 @@ const Checkout = () => {
 					}
 				/>
 
-				{!id ? (
+				{id && from ? (
 					<button
 						onClick={() => saveAddress()}
 						className="bg-green-600 text-white w-full py-3 rounded">

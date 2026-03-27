@@ -14,15 +14,17 @@ const ProductListing = () => {
 	const { items, loading } = useSelector((state) => state.products);
 	const params = new URLSearchParams(location.search);
 	const category = params.get("category") || "";
+	const searchedProduct = params.get("q") || "";
+	console.log("params", searchedProduct);
 
-	console.log("category", filters);
-	const filteredProduct = items?.filter((curr) => {
+	let filteredProduct = items?.filter((curr) => {
 		// category
 		if (category && curr.category !== category.toLowerCase())
 			return false;
-
-		// rating
+		if (!curr.title.toLowerCase().includes(searchedProduct.toLowerCase()))
+			return false;
 		if (filters.rating && curr.rating?.rate < filters.rating)
+			// rating
 			return false;
 
 		// price
@@ -38,6 +40,14 @@ const ProductListing = () => {
 
 		return true;
 	});
+
+	if (filters.price === "High to low") {
+		filteredProduct = filteredProduct.sort((a, b) => b.price - a.price);
+	}
+
+	if (filters.price === "Low to high") {
+		filteredProduct = filteredProduct.sort((a, b) => a.price - b.price);
+	}
 	console.log("filteredProduct", filteredProduct);
 	return (
 		<div className="max-w-7xl mx-auto px-4 mt-6 flex gap-6">
@@ -48,8 +58,19 @@ const ProductListing = () => {
 			/>
 			{/* Right Products */}
 			<div className="flex-1 bg-white p-6 rounded shadow">
-				<h2 className="text-xl font-semibold mb-6">All Products</h2>
-				<ProductGrid products={filteredProduct} />
+				{filteredProduct?.length > 0 ? (
+					<div>
+						<h2 className="text-xl font-semibold mb-6">
+							All Products
+						</h2>
+						<ProductGrid products={filteredProduct} />
+					</div>
+				) : (
+					<p className="text-red-600 font-serif text-xl text-wrap text-center">
+						{" "}
+						No any filtered/searched product found
+					</p>
+				)}
 			</div>
 		</div>
 	);

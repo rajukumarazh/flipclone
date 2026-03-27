@@ -3,9 +3,15 @@ import React from "react";
 export default function FilterSideBar({ filters, setFilters }) {
 	const categories = ["Mobiles", "Laptops", "Fashion"];
 
-	const price = ["Under ₹100", "₹100 - ₹500", "Above ₹500"];
+	const price = [
+		"Under ₹100",
+		"₹100 - ₹500",
+		"Above ₹500",
+		"Low to high",
+		"High to low",
+	];
 	console.log("filters", filters);
-	// ✅ checkbox (multiple)
+
 	const handleCheckbox = (cat) => {
 		setFilters((prev) => {
 			let updated = [...prev.categories];
@@ -23,7 +29,6 @@ export default function FilterSideBar({ filters, setFilters }) {
 		});
 	};
 
-	// ✅ radio (single)
 	const handleRadio = (key, value) => {
 		setFilters((prev) => ({
 			...prev,

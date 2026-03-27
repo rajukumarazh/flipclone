@@ -1,11 +1,20 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 const ProtectedRoutes = () => {
 	const token = localStorage.getItem("tkn");
-	if (token == undefined) {
-		return <Navigate to="/login" />;
-		// if (role && user.role !== role) return <Navigate to="/" />;
+	const location = useLocation();
+
+	if (!token) {
+		return (
+			<Navigate
+				to="/login"
+				state={{ from: location }} // 🔥 SAVE CURRENT PAGE
+				replace
+			/>
+		);
 	}
+
 	return <Outlet />;
 };
+
 export default ProtectedRoutes;

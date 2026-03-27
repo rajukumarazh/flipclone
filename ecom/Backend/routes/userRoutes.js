@@ -31,7 +31,7 @@ router.post("/address", async (req, res) => {
 	//console.log("res", req.body);
 	const newAddress = new Address(req.body);
 	const saved = await newAddress.save();
-	//console.log("req.body", saved);
+
 	res.json(saved);
 });
 router.post("/user_addresses", async (req, res) => {
@@ -70,6 +70,33 @@ router.delete("/address/:id", async (req, res) => {
 		res.json(deleted); // send deleted document back
 	} catch (error) {
 		res.status(500).json({ error: error.message });
+	}
+});
+router.put("/update_address_category/:id", async (req, res) => {
+	console.log("reqofdefault", req.body);
+
+	try {
+		const userId = req.body.user_id;
+
+		// ❌ remove default from all addresses
+		await Address.updateMany(
+			{ user: userId },
+			{ $set: { isDefault: false } },
+		);
+
+		// ✅ set selected address as default
+		const updated = await Address.findByIdAndUpdate(
+			req.body.id,
+			{
+				isDefault: true,
+				category: "home",
+			},
+			{ new: true },
+		);
+		console.log("updated", updated);
+		res.json(updated);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
 	}
 });
 module.exports = router;

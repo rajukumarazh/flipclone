@@ -4,34 +4,39 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { handleLogin2 } from "../features/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 const Login = () => {
-	const loginStatus = useSelector((state) => state.auth);
-	console.log("status", loginStatus);
+	const location = useLocation();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+
+	const loginStatus = useSelector((state) => state.auth);
+	console.log("status", loginStatus);
+
 	const [loginData, setLoginData] = useState({
 		email: "",
 		password: "",
 	});
+	const from = location.state?.from?.pathname || "/";
+	console.log("frompath", from);
 	console.log("login", loginData);
 	async function handleLogin() {
-		let islogin = await axios.post(
-			"http://localhost:5000/api/login",
-			loginData,
-		);
-		// let add = await axios.post(
-		// 	"http://localhost:5000/api/user_addresses",
-		// 	{
-		// 		user_id: "69a1b2e11a878ced01e3f469",
-		// 	},
-		// );
+		try {
+			let islogin = await axios.post(
+				"http://localhost:5000/api/login",
+				loginData,
+			);
 
-		console.log("address", islogin);
-		dispatch(handleLogin2(islogin?.data));
-		if (islogin?.data?.login === true) {
-			localStorage.setItem("tkn", islogin.data.token);
-			//console.log("address", add);
-			navigate("/");
+			dispatch(handleLogin2(islogin?.data));
+
+			if (islogin?.data?.login === true) {
+				localStorage.setItem("tkn", islogin?.data?.token);
+
+				// ✅ redirect back
+				navigate(from, { replace: true });
+			}
+		} catch (error) {
+			console.error(error);
 		}
 	}
 

@@ -7,7 +7,8 @@ import ProductListing from "./Pages/ProductListing";
 import ProductDetails from "./Pages/ProductDetails";
 import ProtectedRoutes from "./Pages/ProtectedRoutes";
 import Cart from "./Pages/Cart";
-import Profile from "./pages/Profile";
+import Profile from "./Pages/Profile";
+// import Profile from "./pages/Profile";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import AdminPanel from "./Pages/AdminPanel";
@@ -21,9 +22,10 @@ import axios from "axios";
 import Orders from "./Pages/Orders";
 import { handleLogin2, tokenLogin } from "./features/auth/authSlice";
 import OrderDetails from "./components/OrderDetails";
+import { useLocation } from "react-router-dom";
 function App() {
 	const pd = useSelector((state) => state?.auth);
-
+	const location = useLocation();
 	const [islogin, setIslogin] = useState(false);
 	let token = localStorage.getItem("tkn");
 	const dispatch = useDispatch();
@@ -73,79 +75,85 @@ function App() {
 	}
 	// console.log("pppp", pd);
 	return (
-		<BrowserRouter>
-			<Layout>
-				<Routes>
+		// <BrowserRouter>
+		<Layout>
+			<Routes>
+				<Route
+					path="/"
+					element={<Home />}
+				/>
+				<Route
+					path="/products"
+					element={<ProductListing />}
+				/>
+				<Route
+					// path="/product/:id"
+					path="details/:id"
+					element={<ProductDetails />}
+				/>
+				<Route
+					// path="/product/:id"
+					path="orderdetails/:id"
+					element={<OrderDetails />}
+				/>
+				<Route
+					path="/cart"
+					element={<Cart />}
+				/>
+
+				<Route element={<ProtectedRoutes />}>
 					<Route
-						path="/"
-						element={<Home />}
+						path="/checkout"
+						element={<Checkout />}
+						state={{ from: location }}
+						replace
 					/>
 					<Route
-						path="/products"
-						element={<ProductListing />}
+						path="/admin"
+						element={<AdminPanel />}
 					/>
 					<Route
-						// path="/product/:id"
-						path="details/:id"
-						element={<ProductDetails />}
+						path="/payment"
+						element={<Payment />}
 					/>
 					<Route
-						// path="/product/:id"
-						path="orderdetails/:id"
-						element={<OrderDetails />}
+						path="/profile"
+						element={<Profile />}
 					/>
 					<Route
-						path="/cart"
-						element={<Cart />}
+						path="/order"
+						element={<MyOrders />}
 					/>
-					<Route element={<ProtectedRoutes />}>
-						<Route
-							path="/checkout"
-							element={<Checkout />}
-						/>
-						<Route
-							path="/profile"
-							element={<Profile />}
-						/>
-						<Route
-							path="/order"
-							element={<MyOrders />}
-						/>
-						<Route
-							path="/payment"
-							element={<Payment />}
-						/>
-						<Route
-							path="/success"
-							element={<PaymentSuccess />}
-						/>
-						<Route
-							path="/orders"
-							element={<Orders />}
-						/>
-					</Route>
-					{/* element=
+
+					<Route
+						path="/success"
+						element={<PaymentSuccess />}
+					/>
+					<Route
+						path="/orders"
+						element={<Orders />}
+					/>
+				</Route>
+				{/* element=
 					{
 						<ProtectedRoute role="admin">
 							<Admin />
 						</ProtectedRoute>
 					} */}
 
-					<Route
-						path="/login"
-						element={<Login />}
-					/>
-					<Route
-						path="/signup"
-						element={<Signup />}
-					/>
-					<Route
-						path="/admin"
-						element={<AdminPanel />}
-					/>
-				</Routes>
-			</Layout>
-		</BrowserRouter>
+				<Route
+					path="/login"
+					state={{ from: location }}
+					element={<Login />}
+					replace
+				/>
+				<Route
+					path="/signup"
+					element={<Signup />}
+				/>
+			</Routes>
+		</Layout>
+		// </BrowserRouter>
 	);
 }
 
