@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { IoCartOutline, IoPersonCircleOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import Login from "../Pages/Login";
 const Navbar = () => {
 	let cart = useSelector((state) => state?.products?.cart);
 	const curentUser = useSelector((state) => state?.auth);
@@ -26,7 +27,7 @@ const Navbar = () => {
 		localStorage.removeItem("tkn");
 		setOpen(!open);
 		alert("sucessfully logout");
-		navigate("/login");
+		navigate("/");
 	};
 
 	return (
@@ -41,7 +42,7 @@ const Navbar = () => {
 
 				{/* Right Menu */}
 				<div className="flex items-center gap-6 text-sm font-medium relative">
-					{!userToken && userToken !== null ? (
+					{!userToken ? (
 						<Link
 							to="/login"
 							className="hidden md:block bg-white text-blue-600 px-5 py-1 rounded">
@@ -50,11 +51,15 @@ const Navbar = () => {
 					) : (
 						<div className="relative">
 							{/* Profile Icon */}
-							<IoPersonCircleOutline
-								size={30}
-								className="cursor-pointer"
-								onClick={() => setOpen(!open)}
-							/>
+							{curentUser?.isLogin === true && (
+								<IoPersonCircleOutline
+									size={30}
+									className="cursor-pointer"
+									onClick={() => {
+										setOpen(!open);
+									}}
+								/>
+							)}
 
 							{/* Dropdown */}
 							{open && (

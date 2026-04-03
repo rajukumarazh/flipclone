@@ -39,7 +39,7 @@ const productSchema = new mongoose.Schema(
 			required: true,
 		},
 
-		quantity: {
+		available: {
 			type: Number,
 			default: 1,
 		},
@@ -47,9 +47,9 @@ const productSchema = new mongoose.Schema(
 		rating: ratingSchema,
 
 		// optional: store fake API id
-		fakeId: {
-			type: Number,
-		},
+		// fakeId: {
+		// 	type: Number,
+		// },
 	},
 	{
 		timestamps: true,

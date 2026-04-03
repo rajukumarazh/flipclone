@@ -2,7 +2,18 @@ import HeroBanner from "../components/HeroBanner";
 import ProductGrid from "../components/ProductGrid";
 import FilterSideBar from "../components/FilterSidebar";
 import HeroCarousel from "../components/HeroCarousel";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 const Home = () => {
+	const logindata = useSelector((state) => state?.auth);
+	const navigate = useNavigate();
+	console.log("logindata", logindata);
+	useEffect(() => {
+		if (logindata?.user?.role === "admin") {
+			navigate("/admin");
+		}
+	}, []);
 	return (
 		<div className="bg-gray-100">
 			{/* Hero Section */}

@@ -38,7 +38,12 @@ const authSlice = createSlice({
 			// 	user_addresses: onlyAddress,
 			// };
 		},
+		handleReduxLogout: (state, action) => {
+			console.log("sstttt", action.payload);
+			return { ...state, isLogin: false };
+		},
 	},
 });
-export const { handleLogin2, tokenLogin } = authSlice.actions;
+export const { handleLogin2, tokenLogin, handleReduxLogout } =
+	authSlice.actions;
 export default authSlice.reducer;

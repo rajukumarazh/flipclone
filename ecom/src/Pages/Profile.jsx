@@ -159,15 +159,19 @@ const Profile = () => {
 											className="text-red-500 hover:underline">
 											Delete
 										</button>
-										<button
-											onClick={() =>
-												makeDefaultAddress(
-													addr?._id,
-												)
-											}
-											className="text-red-500 hover:underline">
-											Make default
-										</button>
+										{addr?.isDefault === !true ? (
+											<button
+												onClick={() =>
+													makeDefaultAddress(
+														addr?._id,
+													)
+												}
+												className="text-red-500 hover:underline">
+												Make default
+											</button>
+										) : (
+											""
+										)}
 									</div>
 								</div>
 							))}

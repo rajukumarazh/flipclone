@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const Signup = () => {
+	const navigate = useNavigate();
 	const [signup, setSignup] = useState({
 		name: "",
 		email: "",
@@ -15,6 +17,9 @@ const Signup = () => {
 			signup,
 		);
 		console.log("helloRegister", registerData);
+		if (registerData?.data) {
+			navigate("/");
+		}
 	}
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">

@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../model/User");
 const Address = require("../model/Address");
 const authMiddleware = require("../middleware/authMiddleware");
+const Order = require("../model/Order");
 
 router.post("/signup", async (req, res) => {
 	const newUser = new User(req.body);
@@ -24,8 +25,9 @@ router.post("/login", async (req, res) => {
 });
 router.get("/islogin", authMiddleware, async (req, res) => {
 	const user = await User.findOne({ email: req.user.email });
+
 	res.json(user);
-	console.log("userlgoindata", user);
+	//console.log("userlgoindata", user);
 });
 router.post("/address", async (req, res) => {
 	//console.log("res", req.body);
@@ -99,4 +101,14 @@ router.put("/update_address_category/:id", async (req, res) => {
 		res.status(500).json({ error: err.message });
 	}
 });
+router.get("/admin/users", async (req, res) => {
+	try {
+		let adminuser = await User.find();
+		console.log("useradminerror", adminuser);
+		res.json(adminuser);
+	} catch (error) {
+		console.log("useradminerror", error);
+	}
+});
+
 module.exports = router;

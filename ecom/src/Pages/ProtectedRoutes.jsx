@@ -1,19 +1,31 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-const ProtectedRoutes = () => {
+const ProtectedRoutes = ({ role }) => {
+	const { user } = useSelector((state) => state.auth);
 	const token = localStorage.getItem("tkn");
-	const location = useLocation();
 
-	if (!token) {
+	// ❌ not logged in
+	if (!token || !user) {
 		return (
 			<Navigate
 				to="/login"
-				state={{ from: location }} // 🔥 SAVE CURRENT PAGE
 				replace
 			/>
 		);
 	}
 
+	// ❌ role mismatch
+	if (role && user.role !== role) {
+		return (
+			<Navigate
+				to="/"
+				replace
+			/>
+		);
+	}
+
+	// ✅ allow access
 	return <Outlet />;
 };
 

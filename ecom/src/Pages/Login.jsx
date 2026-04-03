@@ -10,8 +10,30 @@ const Login = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
+	async function handleLogin() {
+		try {
+			let islogin = await axios.post(
+				"http://localhost:5000/api/login",
+				loginData,
+			);
+			console.log("islogin", islogin);
+			dispatch(handleLogin2(islogin?.data));
+
+			if (islogin?.data?.login === true) {
+				localStorage.setItem("tkn", islogin.data.token);
+
+				if (islogin?.data?.userdata?.role === "admin") {
+					navigate("/admin", { replace: true });
+				} else {
+					navigate("/", { replace: true });
+				}
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
 	const loginStatus = useSelector((state) => state.auth);
-	console.log("status", loginStatus);
+	console.log("loginStatus", loginStatus);
 
 	const [loginData, setLoginData] = useState({
 		email: "",
@@ -19,21 +41,25 @@ const Login = () => {
 	});
 	const from = location.state?.from?.pathname || "/";
 	console.log("frompath", from);
-	console.log("login", loginData);
+	//console.log("login", loginData);
 	async function handleLogin() {
 		try {
 			let islogin = await axios.post(
 				"http://localhost:5000/api/login",
 				loginData,
 			);
-
+			console.log("islogin", islogin);
 			dispatch(handleLogin2(islogin?.data));
 
 			if (islogin?.data?.login === true) {
-				localStorage.setItem("tkn", islogin?.data?.token);
-
-				// ✅ redirect back
-				navigate(from, { replace: true });
+				localStorage.setItem("tkn", islogin.data.token);
+				//console.log("rolllle", islogin?.data?.userdata?.role);
+				// 🔥 ROLE BASED REDIRECT
+				if (islogin?.data?.userdata?.role === "admin") {
+					navigate("/admin", { replace: true });
+				} else {
+					navigate("/", { replace: true });
+				}
 			}
 		} catch (error) {
 			console.error(error);

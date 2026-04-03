@@ -2,7 +2,14 @@ const mongoose = require("mongoose");
 const Address = require("./Address");
 const OrderSchema = new mongoose.Schema(
 	{
-		user_id: mongoose.Schema.Types.ObjectId,
+		user_id: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+		},
+		// address: {
+		// 	type: mongoose.Schema.Types.ObjectId,
+		// 	ref: "Address",
+		// },
 		products: [
 			{
 				title: String,
@@ -15,6 +22,7 @@ const OrderSchema = new mongoose.Schema(
 		],
 		totalAmount: Number,
 		payment_id: String,
+		status: String,
 		address_id: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Address",
